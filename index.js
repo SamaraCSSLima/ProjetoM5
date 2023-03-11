@@ -45,12 +45,14 @@ app.post('/video/insertvideo', (req, res) => {
   
     conn.query(sql, function(err){
         if (err){
-            console.log(err)
+           console.log(err)
         }
   
         res.redirect('/video')
     })
   })
+
+
   
 
 //rota de consulta geral video
@@ -149,19 +151,20 @@ app.get('/video/remove/:nome', (req, res) => {
 app.get('/livros', (req, res) => {
     res.render('home-livros', { layout: false })
   })
-  
+
     //rota para inserir dados livros
   app.post('/livros-cad/insertlivros', (req, res) => {
-    const nome = req.body.nome
+    const titulo = req.body.titulo
+    const autor = req.body.autor
   
-    const sql = `INSERT INTO livros (nome) VALUES ('${nome}')`
+    const sql = `INSERT INTO livros (titulo, autor) VALUES ('${titulo}', '${autor}')`
   
     conn.query(sql, function(err){
         if (err){
             console.log(err)
         }
   
-        res.redirect('/livros')
+        res.redirect('/livros-cad')
     })
   })
   
@@ -245,9 +248,10 @@ app.get('/livros', (req, res) => {
   app.post('/livros-cad/updatelivros-cad', (req, res) => {
   
     const id = req.body.id
-    const nome = req.body.nome
+    const titulo = req.body.nome
+    const autor = req.body.autor
     
-    const sql = `UPDATE livros SET nome = '${nome}' WHERE id = '${id}'` 
+    const sql = `UPDATE livros SET titulo = '${titulo}', autor = '${autor}' WHERE id = '${id}'` 
   
     conn.query(sql, function(err) {
         if(err){
@@ -316,14 +320,14 @@ app.get('/homemusica', function(req,res){
    })
    
    //rota do buscar musica
-   app.get('/buscamusica', (req, res) => {
+   app.get('/buscmusica', (req, res) => {
        res.render('buscamusica', { layout: false })
      })
      
    //rota busc para exibir o resultado do buscar musica
-   app.post('/buscmusica/', (req, res) => {
-         const nome = req.body.nome
-         const sql = `SELECT * FROM musica WHERE nome = '${nome}'`
+   app.get('/buscmusica/:id', (req, res) => {
+         const nome = req.params.id
+         const sql = `SELECT * FROM musica WHERE id = '${nome}'`
        
          conn.query(sql, function(err, data){
             if(err){
@@ -423,9 +427,9 @@ app.get('/buscagame', (req, res) => {
   
 //rota busc para exibir o resultado do buscar
 app.post('/buscgame/', (req, res) => {  //NÃO FUNCIONA
-      const id = req.body.id
+      const nome = req.body.nome
     
-      const sql = `SELECT * FROM jogos WHERE id = ${id}`
+      const sql = `SELECT * FROM jogos WHERE nome = '${nome}'`
     
       conn.query(sql, function(err, data){
          if(err){
@@ -541,11 +545,11 @@ app.post('/loj/insertloj', (req, res) => {
     })
   })
   
-  //Consulta um registo pelo id loja
+  //Consulta um registro pelo id loja
   app.get('/loj/:id', (req, res) => {
-    const id = req.params.id
+    const nome = req.params.id
     
-    const sql = `SELECT * FROM loja WHERE id = ${id}`
+    const sql = `SELECT * FROM loja WHERE id = '${nome}'`
   
     conn.query(sql, function(err, data){
         if(err){
@@ -566,7 +570,7 @@ app.post('/loj/insertloj', (req, res) => {
   
   //Rota busc, para exibir o resultado do buscar loja
   app.post('/busca-loja/', (req, res) => {
-    const nome = req.body.nome
+    const id = req.body.id
     const sql = `SELECT * FROM loja WHERE id = ${id}`
   
     conn.query(sql, function(err, data){
@@ -618,10 +622,10 @@ app.post('/loj/insertloj', (req, res) => {
   })
   
   //rota para deletar um registro loja
-  app.get('/loj/remove/:nome', (req, res) => {
+  app.get('/loj/remove/:id', (req, res) => {
     const id = req.params.id
   
-    const sql = `DELETE FROM loja WHERE nome = '${nome}'`
+    const sql = `DELETE FROM loja WHERE id = '${id}'`
   
     conn.query(sql, function(err){
         if(err){
@@ -651,7 +655,7 @@ app.post('/fornecedor-cad/insertfornecedor', (req, res) => {
             console.log(err)
         }
   
-        res.redirect('/fornecedor')
+        res.redirect('/fornecedor-cad')
     })
   })
   
@@ -675,10 +679,10 @@ app.post('/fornecedor-cad/insertfornecedor', (req, res) => {
   })
   
   //Consulta um registo pelo nome (fornecedor.handlebars)
-  app.get('/fornecedor-cad/:nome', (req, res) => {
-    const nome = req.params.nome
+  app.get('/fornecedor-cad/:id', (req, res) => {
+    const nome = req.params.id
     
-    const sql = `SELECT * FROM fornecedor WHERE nome = '${nome}'`
+    const sql = `SELECT * FROM fornecedor WHERE id = '${nome}'`
   
     conn.query(sql, function(err, data){
         if(err){
@@ -713,11 +717,11 @@ app.post('/fornecedor-cad/insertfornecedor', (req, res) => {
       })
   
   //pegando para editar registro Fornecedor
-  app.get('/fornecedor-cad/edit/:nome', (req, res) => {
+  app.get('/fornecedor-cad/edit/:id', (req, res) => {
       
-    const nome = req.params.nome
+    const id = req.params.id
   
-    const sql = `SELECT * FROM fornecedor where nome = '${nome}'`
+    const sql = `SELECT * FROM fornecedor where id = '${id}'`
   
     conn.query(sql, function(err, data){
         if(err){
@@ -751,10 +755,10 @@ app.post('/fornecedor-cad/insertfornecedor', (req, res) => {
   })
   
   //rota para deletar um registro fornecedor
-  app.get('/fornecedor-cad/remove/:nome', (req, res) => {
-    const id = req.params.nome
+  app.get('/fornecedor-cad/remove/:id', (req, res) => {
+    const id = req.params.id
   
-    const sql = `DELETE FROM fornecedor WHERE nome = '${nome}'`
+    const sql = `DELETE FROM fornecedor WHERE id = '${id}'`
   
     conn.query(sql, function(err){
         if(err){
